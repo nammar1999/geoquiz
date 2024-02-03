@@ -1,53 +1,97 @@
 package com.bignerdranch.android.geoquiz
 
+
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.bignerdranch.android.geoquiz.ui.theme.GeoQuizTheme
+import com.bignerdranch.android.geoquiz.databinding.ActivityMainBinding
+
+
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
+    // private lateinit var trueButton: Button
+    // private lateinit var falseButton: Button
+
+    private val questionBank = listOf(
+        Question(R.string.question_australia, true),
+        Question(R.string.question_ocean, true),
+        Question(R.string.question_mideast, false),
+        Question(R.string.question_africa, false),
+        Question(R.string.question_americas, true),
+        Question(R.string.question_asia, true)
+    )
+
+    private var currentIndex = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        // setContentView(R.layout.activity_main)
 
-                    val trueButton: Button = findViewById(R.id.true_button)
-                    val falseButton: Button = findViewById(R.id.false_button)
 
-                    trueButton.setOnClickListener { _: View ->
-                        Toast.makeText(
-                            this,
-                            R.string.correct_toast,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    falseButton.setOnClickListener { _: View ->
-                        Toast.makeText(
-                            this,
-                            R.string.incorrect_toast,
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "There goes $name!",
-            modifier = modifier
-    )
-}
+        Toast.makeText(
+            this,
+            R.string.welcome,
+            Toast.LENGTH_SHORT
+        ).show()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GeoQuizTheme {
-        Greeting("Walter Bicklein")
+        binding.nextButton.setOnClickListener {
+            currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+        updateQuestion()
+
+        binding.previousButton.setOnClickListener {
+            currentIndex = (currentIndex - 1) % questionBank.size
+            updateQuestion()
+        }
+        updateQuestion()
+    }
+
+    private fun updateQuestion() {
+        binding.questionTextView.setOnClickListener {
+            currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+            val questionTextResId = questionBank[currentIndex].textResId
+            binding.questionTextView.setText(questionTextResId)
+
+
+        //trueButton = findViewById(R.id.true_button)
+        // falseButton = findViewById(R.id.false_button)
+
+        //trueButton.setOnClickListener {view: View ->
+        binding.trueButton.setOnClickListener { view: View ->
+            checkAnswer(true)
+        }
+
+        binding.falseButton.setOnClickListener { view: View ->
+            checkAnswer(false)
+        }
+
+    }
+
+    private fun checkAnswer(userAnswer: Boolean) {
+        val correctAnswer = questionBank[currentIndex].answer
+
+        val messageResId = if (userAnswer == correctAnswer) {
+            R.string.correct_toast
+        } else {
+            R.string.incorrect_toast
+        }
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+/**fun GreetingPreview() {
+    GeoQuizTheme {
+        Greeting("Android")
+
+**/
