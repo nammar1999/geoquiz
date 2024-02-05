@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.bignerdranch.android.geoquiz.databinding.ActivityMainBinding
-
+import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
     private var currentIndex = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -84,14 +84,9 @@ class MainActivity : ComponentActivity() {
         } else {
             R.string.incorrect_toast
         }
-        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
+        Snackbar.make(this, binding.root, resources.getText(messageResId), Snackbar.LENGTH_LONG).show()
+
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-/**fun GreetingPreview() {
-    GeoQuizTheme {
-        Greeting("Android")
-
-**/
