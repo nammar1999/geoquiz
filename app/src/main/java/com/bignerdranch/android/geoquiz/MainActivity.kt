@@ -1,21 +1,17 @@
 package com.bignerdranch.android.geoquiz
 
-
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.bignerdranch.android.geoquiz.databinding.ActivityMainBinding
-import com.google.android.material.snackbar.Snackbar
 
+private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    // private lateinit var trueButton: Button
-    // private lateinit var falseButton: Button
-
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
         Question(R.string.question_ocean, true),
@@ -26,46 +22,42 @@ class MainActivity : ComponentActivity() {
     )
 
     private var currentIndex = 0
+    private var isQuestionAnswered = false
+    private var correctAnswersCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-
+        Log.d(TAG, "onCreate(Bundle?) called")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Toast.makeText(
-            this,
-            R.string.welcome,
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(this, R.string.welcome, Toast.LENGTH_SHORT).show()
 
         binding.nextButton.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
-            updateQuestion()
+            if (currentIndex == questionBank.size - 1) {
+                displayScore()
+            } else {
+                currentIndex = (currentIndex + 1) % questionBank.size
+                isQuestionAnswered = false
+                updateQuestion()
+            }
         }
-        updateQuestion()
 
         binding.previousButton.setOnClickListener {
-            currentIndex = (currentIndex - 1) % questionBank.size
+            currentIndex = (currentIndex - 1 + questionBank.size) % questionBank.size
+            isQuestionAnswered = false
             updateQuestion()
         }
+
         updateQuestion()
     }
 
     private fun updateQuestion() {
-        binding.questionTextView.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
-            updateQuestion()
-        }
-            val questionTextResId = questionBank[currentIndex].textResId
-            binding.questionTextView.setText(questionTextResId)
+        val questionTextResId = questionBank[currentIndex].textResId
+        binding.questionTextView.setText(questionTextResId)
+        binding.trueButton.isEnabled = !isQuestionAnswered
+        binding.falseButton.isEnabled = !isQuestionAnswered
 
-
-        //trueButton = findViewById(R.id.true_button)
-        // falseButton = findViewById(R.id.false_button)
-
-        //trueButton.setOnClickListener {view: View ->
         binding.trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
         }
@@ -73,20 +65,27 @@ class MainActivity : ComponentActivity() {
         binding.falseButton.setOnClickListener { view: View ->
             checkAnswer(false)
         }
-
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
 
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
-        } else {
-            R.string.incorrect_toast
-        }
-       // Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-        Snackbar.make(this, binding.root, resources.getText(messageResId), Snackbar.LENGTH_LONG).show()
+        if (!isQuestionAnswered) {
+            if (userAnswer == correctAnswer) {
+                correctAnswersCount++
+            }
+            isQuestionAnswered = true
+            binding.trueButton.isEnabled = false
+            binding.falseButton.isEnabled = false
 
+            if (currentIndex == questionBank.size - 1) {
+                displayScore()
+            }
+        }
+    }
+
+    private fun displayScore() {
+        val scorePercentage = (correctAnswersCount.toDouble() / questionBank.size) * 100
+        Toast.makeText(this, "Quiz completed! Score: $scorePercentage%", Toast.LENGTH_SHORT).show()
     }
 }
-

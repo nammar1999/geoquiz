@@ -37,25 +37,32 @@
             android:text="@string/false_button"
             android:textColor="#00796B" />
 
-        <Button
-            android:id="@+id/next_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next_button"
-            app:icon="@drawable/arrow_left"
-            app:iconGravity="end"
-            android:textColor="#00796B" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/previous_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/previous_button"
-            app:icon="@drawable/arrow_left"
-            app:iconGravity="end"
-            android:textColor="#00796B" />
+            <Button
+                android:id="@+id/next_button"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next_button"
+                android:textColor="#00796B"
+                app:icon="@drawable/arrow_right"
+                app:iconGravity="end" />
+
+            <Button
+                android:id="@+id/previous_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/previous_button"
+                android:textColor="#00796B"
+                app:icon="@drawable/arrow_left"
+                app:iconGravity="end" />
+        </LinearLayout>
+
     </LinearLayout>
 
 
